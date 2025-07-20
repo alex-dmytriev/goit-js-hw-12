@@ -8,10 +8,12 @@ export function getPhotos(query) {
     q: query,
     key: API_KEY,
     image_type: 'photo',
-    orientation: 'horisontal',
+    orientation: 'horizontal',
     safesearch: true,
     per_page: 27,
   });
 
-  return axios.get(`${ENDPOINT}?${queryParams}`);
+  return axios
+    .get(`${ENDPOINT}?${queryParams}`)
+    .then(respData => respData.data.hits);
 }

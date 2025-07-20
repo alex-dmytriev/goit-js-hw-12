@@ -14,7 +14,6 @@ const formEl = document.querySelector('.form');
 function onSubmit(event) {
   event.preventDefault();
   clearGallery();
-  showLoader();
 
   const searchQuery = event.target.elements['search-text'].value.trim();
   if (!searchQuery) {
@@ -22,26 +21,31 @@ function onSubmit(event) {
       message: 'Empty request. Try again!',
       position: 'topRight',
     });
-  }
+  } else {
+    showLoader();
 
-  getPhotos(searchQuery)
-    .then(resp => {
-      const respData = resp.data.hits;
+    getPhotos(searchQuery)
+      .then(respData => {
+        if (respData.length === 0) {
+          return iziToast.error({
+            message:
+              'Sorry there are no images matching your search query. Please try again!',
+            position: 'topRight',
+          });
+        }
 
-      if (respData.length === 0) {
-        return iziToast.error({
-          message:
-            'Sorry there are no images matching your search query. Please try again!',
+        createGallery(respData);
+      })
+      .catch(err =>
+        iziToast.error({
+          message: err.message,
           position: 'topRight',
-        });
-      }
+        })
+      )
+      .finally(() => hideLoader());
 
-      createGallery(respData);
-    })
-    .catch(err => console.log(err))
-    .finally(() => hideLoader());
-
-  event.target.reset();
+    event.target.reset();
+  }
 }
 
 // Event Listeners
