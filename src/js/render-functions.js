@@ -17,7 +17,7 @@ export function createGallery(images) {
       </li>`
     )
     .join('');
-  refs.galleryEl.innerHTML = dynamicMarkup;
+  refs.galleryEl.insertAdjacentHTML('beforeend', dynamicMarkup);
   simpleGallery.refresh();
 }
 
@@ -34,6 +34,10 @@ export function hideLoader() {
   refs.loaderEl.classList.add('is-hidden');
 }
 
-export function showLoadMoreButton() {}
+export function showLoadMoreButton() {
+  refs.loadMoreBtn.classList.remove('is-hidden');
+}
 
-export function hideLoadMoreButton() {}
+export function hideLoadMoreButton() {
+  refs.loadMoreBtn.classList.add('is-hidden');
+}

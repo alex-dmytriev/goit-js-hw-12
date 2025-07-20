@@ -12,6 +12,7 @@
 
 @import url('simplelightbox/dist/simple-lightbox.min.css');
 
+
 .gallery {
   max-width: 1128px;
   display: grid;
@@ -115,4 +116,8 @@
   font: 600 12px / 1.33333 "Montserrat", sans-serif;
   letter-spacing: 0.04em;
   color: #2e2f42;
+}
+
+.is-hidden {
+  display: none;
 }
