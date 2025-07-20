@@ -11,7 +11,7 @@ import {
 const formEl = document.querySelector('.form');
 
 // Handlers
-function onSubmit(event) {
+async function onSubmit(event) {
   event.preventDefault();
   clearGallery();
 
@@ -24,25 +24,27 @@ function onSubmit(event) {
   } else {
     showLoader();
 
-    getPhotos(searchQuery)
-      .then(respData => {
-        if (respData.length === 0) {
-          return iziToast.error({
-            message:
-              'Sorry there are no images matching your search query. Please try again!',
-            position: 'topRight',
-          });
-        }
+    try {
+      const respData = await getPhotos(searchQuery);
 
-        createGallery(respData);
-      })
-      .catch(err =>
-        iziToast.error({
-          message: err.message,
+      if (respData.length === 0) {
+        return iziToast.error({
+          message:
+            'Sorry there are no images matching your search query. Please try again!',
           position: 'topRight',
-        })
-      )
-      .finally(() => hideLoader());
+        });
+      }
+
+      createGallery(respData);
+    } catch (err) {
+      iziToast.error({
+        message: err.message,
+        position: 'topRight',
+      });
+    } finally {
+      hideLoader();
+      ``;
+    }
 
     event.target.reset();
   }
