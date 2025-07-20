@@ -7,10 +7,16 @@ import {
   showLoader,
 } from './js/render-functions';
 
-// References
-const formEl = document.querySelector('.form');
+//--- References ---
+export const refs = {
+  formEl: document.querySelector('.form'),
+  galleryEl: document.querySelector('.gallery'),
+  loadMoreBtn: document.querySelector('.load-more-btn'),
+  loaderEl: document.querySelector('.loader'),
+};
 
-// Handlers
+//--- Handlers ---
+// Search query validaton
 async function onSubmit(event) {
   event.preventDefault();
   clearGallery();
@@ -21,34 +27,44 @@ async function onSubmit(event) {
       message: 'Empty request. Try again!',
       position: 'topRight',
     });
-  } else {
-    showLoader();
+  }
+  showLoader();
 
-    try {
-      const respData = await getPhotos(searchQuery);
+  // Server response processing & gallery markup insertion
+  try {
+    const respData = await getPhotos(searchQuery);
+    const hits = respData.hits;
 
-      if (respData.length === 0) {
-        return iziToast.error({
-          message:
-            'Sorry there are no images matching your search query. Please try again!',
-          position: 'topRight',
-        });
-      }
-
-      createGallery(respData);
-    } catch (err) {
-      iziToast.error({
-        message: err.message,
+    if (hits.length === 0) {
+      return iziToast.error({
+        message:
+          'Sorry there are no images matching your search query. Please try again!',
         position: 'topRight',
       });
-    } finally {
-      hideLoader();
-      ``;
     }
 
-    event.target.reset();
+    createGallery(hits);
+
+    const totalHits = respData.totalHits;
+    console.log(totalHits);
+    // if (TotalHits > per_page) {
+    // }
+  } catch (err) {
+    iziToast.error({
+      message: err.message,
+      position: 'topRight',
+    });
+  } finally {
+    hideLoader();
   }
+
+  event.target.reset();
+  console.count('Form submitted');
 }
 
-// Event Listeners
-formEl.addEventListener('submit', onSubmit);
+// Load more logic
+async function onClickLoadMoreBtn(e) {}
+
+//--- Event Listeners ---
+refs.formEl.addEventListener('submit', onSubmit);
+refs.loadMoreBtn.addEventListener('click', onClickLoadMoreBtn);

@@ -1,7 +1,5 @@
 import SimpleLightbox from 'simplelightbox';
-
-const galleryEl = document.querySelector('.gallery');
-const loaderEl = document.querySelector('.loader');
+import { refs } from '../main';
 
 const simpleGallery = new SimpleLightbox('.gallery a');
 
@@ -19,21 +17,21 @@ export function createGallery(images) {
       </li>`
     )
     .join('');
-  galleryEl.innerHTML = dynamicMarkup;
+  refs.galleryEl.innerHTML = dynamicMarkup;
   simpleGallery.refresh();
 }
 
 // Utilities
 export function clearGallery() {
-  galleryEl.innerHTML = '';
+  refs.galleryEl.innerHTML = '';
 }
 
 export function showLoader() {
-  loaderEl.classList.remove('is-hidden');
+  refs.loaderEl.classList.remove('is-hidden');
 }
 
 export function hideLoader() {
-  loaderEl.classList.add('is-hidden');
+  refs.loaderEl.classList.add('is-hidden');
 }
 
 export function showLoadMoreButton() {}

@@ -10,12 +10,13 @@ export async function getPhotos(query, page) {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
-    per_page: 27,
+    per_page: 15,
+    // page: page,
   });
 
   try {
     const respData = await axios.get(`${ENDPOINT}?${queryParams}`);
-    return respData.data.hits;
+    return respData.data;
   } catch (err) {
     throw err;
   }
