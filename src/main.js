@@ -71,10 +71,11 @@ async function onSubmit(event) {
     });
   } finally {
     renders.hideLoader();
+
     // Check if there is more images to show on the next page
     maxPageCount = Math.ceil(respData.totalHits / perPage);
 
-    if (respData.totalHits > perPage) {
+    if (currentPage !== maxPageCount) {
       renders.showLoadMoreButton();
     }
   }
@@ -108,7 +109,7 @@ async function onClickLoadMoreBtn() {
   } finally {
     renders.hideLoader();
 
-    if (currentPage >= maxPageCount) {
+    if (currentPage === maxPageCount) {
       renders.hideLoadMoreButton();
       iziToast.info({
         message: "We're sorry, but you've reached the end of search results.",
