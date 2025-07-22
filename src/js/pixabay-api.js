@@ -1,7 +1,6 @@
 import axios from 'axios';
-import { refs } from '../main';
 
-export async function getPhotos(query, page = 1) {
+export async function getPhotos(query, page = 1, perPage = 15) {
   const ENDPOINT = 'https://pixabay.com/api/';
   const API_KEY = '51376542-95e34f1d639dab3c27f4a47b0';
 
@@ -11,7 +10,7 @@ export async function getPhotos(query, page = 1) {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: true,
-    per_page: refs.per_page,
+    per_page: perPage,
     page: page,
   });
 

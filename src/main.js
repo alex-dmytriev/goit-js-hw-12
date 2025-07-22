@@ -8,10 +8,10 @@ export const refs = {
   galleryEl: document.querySelector('.gallery'),
   loadMoreBtn: document.querySelector('.load-more-btn'),
   loaderEl: document.querySelector('.loader'),
-  per_page: 15, // Per page value for pixabay-api and show 'Load more' button logic
 };
 
 //=== Global Variables ===
+const perPage = 15;
 let currentSearchQuery = '';
 let currentPage = 1;
 let maxPageCount = 1;
@@ -52,7 +52,7 @@ async function onSubmit(event) {
   // Server response processing & gallery markup insertion
   currentPage = 1; // reset page counter for a new submit
   try {
-    respData = await getPhotos(searchQuery, currentPage);
+    respData = await getPhotos(searchQuery, currentPage, perPage);
     const hits = respData.hits;
 
     if (hits.length === 0) {
@@ -72,9 +72,9 @@ async function onSubmit(event) {
   } finally {
     renders.hideLoader();
     // Check if there is more images to show on the next page
-    maxPageCount = Math.ceil(respData.totalHits / refs.per_page);
+    maxPageCount = Math.ceil(respData.totalHits / perPage);
 
-    if (respData.totalHits > refs.per_page) {
+    if (respData.totalHits > perPage) {
       renders.showLoadMoreButton();
     }
   }
