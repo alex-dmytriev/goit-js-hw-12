@@ -1,15 +1,8 @@
 import iziToast from 'izitoast';
 import { getPhotos } from './js/pixabay-api';
-import {
-  clearGallery,
-  createGallery,
-  hideLoader,
-  hideLoadMoreButton,
-  showLoader,
-  showLoadMoreButton,
-} from './js/render-functions';
+import * as renders from './js/render-functions';
 
-//--- References ---
+//=== References ===
 export const refs = {
   formEl: document.querySelector('.form'),
   galleryEl: document.querySelector('.gallery'),
@@ -18,16 +11,30 @@ export const refs = {
   per_page: 15, // Per page value for pixabay-api and show 'Load more' button logic
 };
 
-//--- Global Variables ---
+//=== Global Variables ===
 let currentSearchQuery = '';
 let currentPage = 1;
 let maxPageCount = 1;
 
-//--- Handlers ---
+//=== Event Listeners ===
+refs.formEl.addEventListener('submit', onSubmit);
+refs.loadMoreBtn.addEventListener('click', onClickLoadMoreBtn);
+refs.galleryEl.addEventListener('click', onGalleryClick);
+
+//=== Handlers ===
+// Prevent opening large image URL
+function onGalleryClick(e) {
+  const clickedEl = e.target;
+
+  if (clickedEl.nodeName === 'IMG') {
+    e.preventDefault();
+  }
+}
+
 // Search query validaton
 async function onSubmit(event) {
   event.preventDefault();
-  clearGallery();
+  renders.clearGallery();
   let respData = null; // onSubmit scope availability for respData
 
   const searchQuery = event.target.elements['search-text'].value.trim();
@@ -37,10 +44,10 @@ async function onSubmit(event) {
       position: 'topRight',
     });
   }
-  currentSearchQuery = searchQuery; // Assign validated search query value to the global variable;
+  currentSearchQuery = searchQuery; // Assign validated search query value to the global var to reuse it
 
-  hideLoadMoreButton();
-  showLoader();
+  renders.hideLoadMoreButton();
+  renders.showLoader();
 
   // Server response processing & gallery markup insertion
   currentPage = 1; // reset page counter for a new submit
@@ -56,19 +63,19 @@ async function onSubmit(event) {
       });
     }
 
-    createGallery(hits);
+    renders.createGallery(hits);
   } catch (err) {
     iziToast.error({
       message: err.message,
       position: 'topRight',
     });
   } finally {
-    hideLoader();
+    renders.hideLoader();
     // Check if there is more images to show on the next page
     maxPageCount = Math.ceil(respData.totalHits / refs.per_page);
 
     if (respData.totalHits > refs.per_page) {
-      showLoadMoreButton();
+      renders.showLoadMoreButton();
     }
   }
 
@@ -77,8 +84,8 @@ async function onSubmit(event) {
 
 // Load more button logic
 async function onClickLoadMoreBtn() {
-  hideLoadMoreButton();
-  showLoader();
+  renders.hideLoadMoreButton();
+  renders.showLoader();
 
   currentPage += 1;
 
@@ -86,7 +93,7 @@ async function onClickLoadMoreBtn() {
     const respNextData = await getPhotos(currentSearchQuery, currentPage);
     const nextHits = respNextData.hits;
 
-    createGallery(nextHits);
+    renders.createGallery(nextHits);
     // Scroll behaviour //
     const galleryItemEl = document.querySelector('.gallery li');
     const galleryItemHeight = galleryItemEl.getBoundingClientRect().height;
@@ -99,20 +106,16 @@ async function onClickLoadMoreBtn() {
   } catch (err) {
     iziToast.error({ message: err.message, position: 'topRight' });
   } finally {
-    hideLoader();
+    renders.hideLoader();
 
     if (currentPage >= maxPageCount) {
-      hideLoadMoreButton();
+      renders.hideLoadMoreButton();
       iziToast.info({
         message: "We're sorry, but you've reached the end of search results.",
         position: 'topRight',
       });
     } else {
-      showLoadMoreButton();
+      renders.showLoadMoreButton();
     }
   }
 }
-
-//--- Event Listeners ---
-refs.formEl.addEventListener('submit', onSubmit);
-refs.loadMoreBtn.addEventListener('click', onClickLoadMoreBtn);
